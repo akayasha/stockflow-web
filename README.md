@@ -1,59 +1,89 @@
-# StockflowWeb
+# StockFlow Web
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.0.
+Angular frontend for the StockFlow inventory and invoicing take-home test.
 
-## Development server
+## Prerequisites
 
-To start a local development server, run:
+- Node.js 22+
+- Backend running at `http://localhost:8080`
 
-```bash
-ng serve
-```
+The dev server uses `proxy.conf.json`, so browser requests to `/api` are
+proxied to the Spring Boot backend.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Setup and run
 
 ```bash
-ng generate component component-name
+cd D:\works\stockflow-web
+npm install
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Open:
+
+```text
+http://localhost:4200
+```
+
+Build:
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+## Demo credentials
 
-To build the project run:
+Admin is seeded by the backend Flyway migration:
 
-```bash
-ng build
-```
+| Role | Email | Password |
+|---|---|---|
+| ADMIN | `demo@stockflow.dev` | `Demo1234!` |
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Normal registration from the UI creates a `STAFF` account.
 
-## Running unit tests
+## Simple flow
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+1. Start backend first.
+2. Start frontend with `npm start`.
+3. Login as admin.
+4. Check **Products**: seeded products are the shared catalog.
+5. Register a new staff user.
+6. Login as staff.
+7. Staff can see shared admin products, but cannot edit/delete them.
+8. Staff creates an invoice using shared products.
+9. Staff issues the invoice; backend decrements stock.
+10. Admin logs in again and can view all invoices.
 
-```bash
-ng test
-```
+## Use cases
 
-## Running end-to-end tests
+| Actor | Use case |
+|---|---|
+| ADMIN | Login using the seeded admin account. |
+| ADMIN | View and manage shared catalog products. |
+| ADMIN | View all staff invoices. |
+| STAFF | Register/login as a normal user. |
+| STAFF | View shared admin catalog products. |
+| STAFF | Create and manage own products. |
+| STAFF | Create invoices from shared or own products. |
+| STAFF | Edit DRAFT invoice line items. |
+| STAFF | Issue, mark paid, or cancel own invoices. |
 
-For end-to-end (e2e) testing, run:
+## Implemented screens
 
-```bash
-ng e2e
-```
+- Register
+- Login/logout
+- Product list/search/pagination
+- Product create/edit/delete for own products
+- Shared catalog product visibility for staff
+- Invoice create
+- Invoice list/filter/pagination
+- Invoice detail
+- DRAFT invoice line-item edit
+- Issue / mark paid / cancel actions for staff-owned invoices
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Notes
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Product and invoice business rules are enforced by the backend.
+- Frontend previews invoice totals, but final totals are calculated server-side.
+- Staff cannot modify admin-owned shared catalog products from the UI.
+- Admin can view all invoices; mutation actions are hidden in the UI to avoid
+  changing another user's invoice by accident.
